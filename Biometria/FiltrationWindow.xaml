@@ -1,0 +1,127 @@
+﻿<Window x:Class="Biometria.FiltrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:Biometria.Converters"
+        xmlns:local="clr-namespace:Biometria"
+        mc:Ignorable="d"
+        Title="FiltrationWindow" Height="450" Width="800">
+    <Window.Resources>
+        <converters:CanvasSizeConverter x:Key="CanvasSizeConverter"/>
+        <converters:LogicalOrConverter x:Key="LogicalOrConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right">
+            <GroupBox Header="Maska 3x3" Visibility="{Binding ElementName=Custom3x3_RB, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox Name="Mask3x3_0" Text="{Binding Mask3x30}"/>
+                    <TextBox Name="Mask3x3_1" Text="{Binding Mask3x31}" Grid.Row="1"/>
+                    <TextBox Name="Mask3x3_2" Text="{Binding Mask3x32}" Grid.Row="2"/>
+                    <TextBox Name="Mask3x3_3" Text="{Binding Mask3x33}" Grid.Column="1"/>
+                    <TextBox Name="Mask3x3_4" Text="{Binding Mask3x34}" Grid.Column="1" Grid.Row="1"/>
+                    <TextBox Name="Mask3x3_5" Text="{Binding Mask3x35}" Grid.Column="1" Grid.Row="2"/>
+                    <TextBox Name="Mask3x3_6" Text="{Binding Mask3x36}" Grid.Column="2"/>
+                    <TextBox Name="Mask3x3_7" Text="{Binding Mask3x37}" Grid.Column="2" Grid.Row="1"/>
+                    <TextBox Name="Mask3x3_8" Text="{Binding Mask3x38}" Grid.Column="2" Grid.Row="2"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Maska 5x5" Visibility="{Binding ElementName=Custom5x5_RB, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="32"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox Name="Mask5x5_0" Text="{Binding Mask5x50}"/>
+                    <TextBox Name="Mask5x5_1" Text="{Binding Mask5x51}" Grid.Column="1"/>
+                    <TextBox Name="Mask5x5_2" Text="{Binding Mask5x52}" Grid.Column="2"/>
+                    <TextBox Name="Mask5x5_3" Text="{Binding Mask5x53}" Grid.Column="3"/>
+                    <TextBox Name="Mask5x5_4" Text="{Binding Mask5x54}" Grid.Column="4"/>
+                    <TextBox Name="Mask5x5_5" Text="{Binding Mask5x55}" Grid.Row="1" />
+                    <TextBox Name="Mask5x5_6" Text="{Binding Mask5x56}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBox Name="Mask5x5_7" Text="{Binding Mask5x57}" Grid.Row="1" Grid.Column="2"/>
+                    <TextBox Name="Mask5x5_8" Text="{Binding Mask5x58}" Grid.Row="1" Grid.Column="3"/>
+                    <TextBox Name="Mask5x5_9" Text="{Binding Mask5x59}" Grid.Row="1" Grid.Column="4"/>
+                    <TextBox Name="Mask5x5_10" Text="{Binding Mask5x510}" Grid.Row="2" />
+                    <TextBox Name="Mask5x5_11" Text="{Binding Mask5x511}" Grid.Row="2" Grid.Column="1"/>
+                    <TextBox Name="Mask5x5_12" Text="{Binding Mask5x512}" Grid.Row="2" Grid.Column="2"/>
+                    <TextBox Name="Mask5x5_13" Text="{Binding Mask5x513}" Grid.Row="2" Grid.Column="3"/>
+                    <TextBox Name="Mask5x5_14" Text="{Binding Mask5x514}" Grid.Row="2" Grid.Column="4"/>
+                    <TextBox Name="Mask5x5_15" Text="{Binding Mask5x515}" Grid.Row="3" />
+                    <TextBox Name="Mask5x5_16" Text="{Binding Mask5x516}" Grid.Row="3" Grid.Column="1"/>
+                    <TextBox Name="Mask5x5_17" Text="{Binding Mask5x517}" Grid.Row="3" Grid.Column="2"/>
+                    <TextBox Name="Mask5x5_18" Text="{Binding Mask5x518}" Grid.Row="3" Grid.Column="3"/>
+                    <TextBox Name="Mask5x5_19" Text="{Binding Mask5x519}" Grid.Row="3" Grid.Column="4"/>
+                    <TextBox Name="Mask5x5_20" Text="{Binding Mask5x520}" Grid.Row="4" />
+                    <TextBox Name="Mask5x5_21" Text="{Binding Mask5x521}" Grid.Row="4" Grid.Column="1"/>
+                    <TextBox Name="Mask5x5_22" Text="{Binding Mask5x522}" Grid.Row="4" Grid.Column="2"/>
+                    <TextBox Name="Mask5x5_23" Text="{Binding Mask5x523}" Grid.Row="4" Grid.Column="3"/>
+                    <TextBox Name="Mask5x5_24" Text="{Binding Mask5x524}" Grid.Row="4" Grid.Column="4"/>
+                </Grid>
+            </GroupBox>
+            <RadioButton GroupName="FilterMethod" Name="Custom3x3_RB" Content="Własny 3x3" IsChecked="True"/>
+            <RadioButton GroupName="FilterMethod" Name="Custom5x5_RB" Content="Własny5x5"/>
+            <RadioButton GroupName="FilterMethod" Name="LowPass_RB" Content="Rozmywający"/>
+            <RadioButton GroupName="FilterMethod" Name="Prewitt_RB" Content="Prewitta"/>
+            <RadioButton GroupName="FilterMethod" Name="Sobel_RB" Content="Sobela"/>
+            <RadioButton GroupName="FilterMethod" Name="Laplace_RB" Content="Laplace'a"/>
+            <RadioButton GroupName="FilterMethod" Name="Corner_RB" Content="Wykrywający narożniki"/>
+            <RadioButton GroupName="FilterMethod" Name="Kuwahara_RB" Content="Kuwahara"/>
+            <RadioButton GroupName="FilterMethod" Name="Median3x3_RB" Content="Medianowy 3x3"/>
+            <RadioButton GroupName="FilterMethod" Name="Median5x5_RB" Content="Medianowy 5x5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="42"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="33"/>
+                </Grid.ColumnDefinitions>
+                <Label VerticalAlignment="Center">Zoom</Label>
+                <Slider Name="Zoom_Slider" VerticalAlignment="Center" Grid.Column="1" Minimum="1" Maximum="8"/>
+                <Label VerticalAlignment="Center" Grid.Column="2" Content="{Binding ElementName=Zoom_Slider,Path=Value}" ContentStringFormat="{}x{0:0.0}"/>
+            </Grid>
+            <Button Click="FilterImage" Margin="2">Wykonaj</Button>
+            <Button Click="ResetImage" Margin="2">Reset</Button>
+        </StackPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderBrush="Black" BorderThickness="20 20 20 20">
+            <Canvas Name="Main_Canvas" DataContext="{Binding BitmapSource}">
+                <Canvas.Width>
+                    <MultiBinding Converter="{StaticResource CanvasSizeConverter}">
+                        <Binding Path="Width"/>
+                        <Binding ElementName="Zoom_Slider" Path="Value"/>
+                    </MultiBinding>
+                </Canvas.Width>
+                <Canvas.Height>
+                    <MultiBinding Converter="{StaticResource CanvasSizeConverter}">
+                        <Binding Path="Height"/>
+                        <Binding ElementName="Zoom_Slider" Path="Value"/>
+                    </MultiBinding>
+                </Canvas.Height>
+                <Canvas.RenderTransform>
+                    <ScaleTransform ScaleX="{Binding ElementName=Zoom_Slider,Path=Value}" ScaleY="{Binding ElementName=Zoom_Slider,Path=Value}"/>
+                </Canvas.RenderTransform>
+                <Image Name="Processed_Image" Source="{Binding}"/>
+            </Canvas>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
