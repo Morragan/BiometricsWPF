@@ -23,7 +23,11 @@ namespace Biometria
     {
         readonly BitmapSource bitmapSourceCopy;
 
-        public BitmapSource BitmapSource { get; set; }
+        public BitmapSource BitmapSource
+        {
+            get => (BitmapSource)Processed_Image.Source;
+            set => Processed_Image.Source = value;
+        }
         private byte otsuThreshold = 0;
         public byte OtsuThreshold
         {
@@ -40,10 +44,10 @@ namespace Biometria
 
         public BinarizationWindow(BitmapSource bitmapSource)
         {
-            BitmapSource = bitmapSource;
-            bitmapSourceCopy = bitmapSource;
             InitializeComponent();
             DataContext = this;
+            BitmapSource = bitmapSource;
+            bitmapSourceCopy = bitmapSource.Clone();
 
             // wyłącz rozmycie
             Processed_Image.UseLayoutRounding = true;
@@ -79,7 +83,6 @@ namespace Biometria
                 BitmapSource = BitmapSource.Binarize(OtsuThreshold);
             else
                 BitmapSource = BitmapSource.BinarizeNiblack(NiblackK, (int)NiblackWidth, (int)NiblackHeight);
-            Processed_Image.Source = BitmapSource;
         }
 
         /// <summary>
@@ -90,7 +93,6 @@ namespace Biometria
         private void ResetImage(object sender, RoutedEventArgs e)
         {
             BitmapSource = bitmapSourceCopy.Clone();
-            Processed_Image.Source = BitmapSource;
         }
     }
 }

@@ -23,7 +23,11 @@ namespace Biometria
     {
         readonly BitmapSource bitmapSourceCopy;
 
-        public BitmapSource BitmapSource { get; set; }
+        public BitmapSource BitmapSource
+        {
+            get => (BitmapSource)Processed_Image.Source;
+            set => Processed_Image.Source = value;
+        }
         #region 3x3 Mask
         public int Mask3x30 { get; set; }
         public int Mask3x31 { get; set; }
@@ -67,10 +71,10 @@ namespace Biometria
 
         public FiltrationWindow(BitmapSource bitmapSource)
         {
-            BitmapSource = bitmapSource;
-            bitmapSourceCopy = bitmapSource.Clone();
             InitializeComponent();
             DataContext = this;
+            BitmapSource = bitmapSource;
+            bitmapSourceCopy = bitmapSource.Clone();
 
             // wyłącz rozmycie
             Processed_Image.UseLayoutRounding = true;
@@ -82,7 +86,6 @@ namespace Biometria
         private void ResetImage(object sender, RoutedEventArgs e)
         {
             BitmapSource = bitmapSourceCopy.Clone();
-            Processed_Image.Source = BitmapSource;
         }
 
         private void FilterImage(object sender, RoutedEventArgs e)
@@ -102,7 +105,6 @@ namespace Biometria
             if (Custom3x3_RB.IsChecked == true) BitmapSource = BitmapSource.FilterCustom(Mask3x3);
             else if (Custom5x5_RB.IsChecked == true) BitmapSource = BitmapSource.FilterCustom(Mask5x5);
             else BitmapSource = BitmapSource.Filter(method);
-            Processed_Image.Source = BitmapSource;
         }
     }
 }

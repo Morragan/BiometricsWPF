@@ -47,10 +47,11 @@ namespace Biometria.Extensions
             return writeableBitmap.Gray();
         }
 
-        public static void UpdateWithPixelArray(this WriteableBitmap writeableBitmap, byte[] pixels)
+        public static WriteableBitmap UpdateWithPixelArray(this WriteableBitmap writeableBitmap, byte[] pixels)
         {
             Int32Rect rect = new Int32Rect(0, 0, writeableBitmap.PixelWidth, writeableBitmap.PixelHeight);
             writeableBitmap.WritePixels(rect, pixels, writeableBitmap.BackBufferStride, 0);
+            return writeableBitmap;
         }
 
         public static unsafe void ForEachAsync(this WriteableBitmap writeableBitmap, Func<int, int, Color, Color> func)

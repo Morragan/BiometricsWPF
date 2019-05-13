@@ -19,29 +19,18 @@ using Biometria.Extensions;
 
 namespace Biometria
 {
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         byte[] pixels;
         BitmapSource savedBitmapCopy;
-        BitmapSource bitmapSource;
 
         public int[] brightnessHistogramValues;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         // Bindowane właściwości
         public BitmapSource BitmapSource
         {
-            get { return bitmapSource; }
-            set
-            {
-                bitmapSource = value;
-                NotifyPropertyChanged("BitmapSource");
-            }
+            get => (BitmapSource)Processed_Image.Source;
+            set => Processed_Image.Source = value;
         }
         public Brush RectangleFill { get; set; }
         public double Brightness { get; set; } = 1;
@@ -120,8 +109,8 @@ namespace Biometria
             writeableBitmap.CopyPixels(pixels, stride, 0);
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                pixels.SetRGB((int)p.X, (int)p.Y, 
-                    ((SolidColorBrush)RectangleFill).Color.R, ((SolidColorBrush)RectangleFill).Color.G, ((SolidColorBrush)RectangleFill).Color.B, 
+                pixels.SetRGB((int)p.X, (int)p.Y,
+                    ((SolidColorBrush)RectangleFill).Color.R, ((SolidColorBrush)RectangleFill).Color.G, ((SolidColorBrush)RectangleFill).Color.B,
                     writeableBitmap.BackBufferStride, writeableBitmap.PixelHeight / writeableBitmap.Height, writeableBitmap.PixelWidth / writeableBitmap.Width);
             else
             {
@@ -143,7 +132,6 @@ namespace Biometria
             Int32Rect rect = new Int32Rect(0, 0, writeableBitmap.PixelWidth, writeableBitmap.PixelHeight);
             writeableBitmap.WritePixels(rect, pixels, stride, 0);
             BitmapSource = writeableBitmap.ToBitmapSource();
-            Processed_Image.Source = BitmapSource;
         }
 
         /// <summary>
@@ -297,7 +285,6 @@ namespace Biometria
         private void ResetImage(object sender, RoutedEventArgs e)
         {
             BitmapSource = savedBitmapCopy.Clone();
-            Processed_Image.Source = BitmapSource;
         }
 
         /// <summary>
@@ -319,7 +306,6 @@ namespace Biometria
 
             // zapisz do bitmapy
             BitmapSource = writeableBitmap.ToBitmapSource();
-            Processed_Image.Source = BitmapSource;
         }
 
         /// <summary>
@@ -342,7 +328,6 @@ namespace Biometria
 
             // zapisz do bitmapy
             BitmapSource = writeableBitmap.ToBitmapSource();
-            Processed_Image.Source = BitmapSource;
         }
 
         private void OpenBinarizationWindow(object sender, RoutedEventArgs e)
@@ -380,15 +365,12 @@ namespace Biometria
 
             // zapisz do bitmapy
             BitmapSource = writeableBitmap.ToBitmapSource();
-            Processed_Image.Source = BitmapSource;
         }
 
         private void OpenFiltrationWindow(object sender, RoutedEventArgs e)
         {
-            FiltrationWindow window = new FiltrationWindow(bitmapSource);
+            FiltrationWindow window = new FiltrationWindow(BitmapSource);
             window.ShowDialog();
         }
     }
 }
-
-//TODO: DECOUPLE EVERYTHING
