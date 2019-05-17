@@ -110,8 +110,7 @@ namespace Biometria
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 pixels.SetRGB((int)p.X, (int)p.Y,
-                    ((SolidColorBrush)RectangleFill).Color.R, ((SolidColorBrush)RectangleFill).Color.G, ((SolidColorBrush)RectangleFill).Color.B,
-                    writeableBitmap.BackBufferStride, writeableBitmap.PixelHeight / writeableBitmap.Height, writeableBitmap.PixelWidth / writeableBitmap.Width);
+                    ((SolidColorBrush)RectangleFill).Color.R, ((SolidColorBrush)RectangleFill).Color.G, ((SolidColorBrush)RectangleFill).Color.B, writeableBitmap.BackBufferStride);
             else
             {
                 // ustaw kolor pędzla na kolor wybranego piksela
@@ -371,6 +370,34 @@ namespace Biometria
         {
             FiltrationWindow window = new FiltrationWindow(BitmapSource);
             window.ShowDialog();
+        }
+
+        private void ThinImageKMM(object sender, RoutedEventArgs e)
+        {
+            BitmapSource = BitmapSource.Binarize(BitmapSource.OtsuThreshold()).KMMThinning();
+            var minutiae = BitmapSource.GetMinutiae();
+            var writeableBitmap = new WriteableBitmap(BitmapSource);
+            writeableBitmap.ForEach((x, y, color) =>
+            {
+                if (minutiae.Contains((x, y)))
+                    return Colors.Red;
+                else return color;
+            });
+            BitmapSource = writeableBitmap.ToBitmapSource();
+        }
+
+        private void ThinImageK3M(object sender, RoutedEventArgs e)
+        {
+            BitmapSource = BitmapSource.Binarize(BitmapSource.OtsuThreshold()).K3MThinning();
+            var minutiae = BitmapSource.GetMinutiae();
+            var writeableBitmap = new WriteableBitmap(BitmapSource);
+            writeableBitmap.ForEach((x, y, color) =>
+            {
+                if (minutiae.Contains((x, y)))
+                    return Colors.Red;
+                else return color;
+            });
+            BitmapSource = writeableBitmap.ToBitmapSource();
         }
     }
 }

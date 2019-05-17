@@ -111,6 +111,7 @@
     <Compile Include="Extensions\FiltrationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\HistogramExtensions.cs" />
+    <Compile Include="Extensions\ThinningExtensions.cs" />
     <Compile Include="FiltrationWindow.xaml.cs">
       <DependentUpon>FiltrationWindow.xaml</DependentUpon>
     </Compile>

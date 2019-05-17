@@ -25,6 +25,10 @@
                 <MenuItem Header="_Wyrównanie histogramu" Click="EqualizeHistogram" Name="EqualizeHistogram_MenuOption" IsEnabled="False"/>
                 <MenuItem Header="_Binaryzacja" Click="OpenBinarizationWindow" Name="Binarization_MenuOption" IsEnabled="False"/>
                 <MenuItem Header="_Filtrowanie" Click="OpenFiltrationWindow" Name="Filtration_MenuOption" IsEnabled="False"/>
+                <MenuItem Header="_Ścienianie">
+                    <MenuItem Header="_KMM" Click="ThinImageKMM" Name="ThinningKMM_MenuOption"/>
+                    <MenuItem Header="_K3M" Click="ThinImageK3M" Name="ThinningK3M_MenuOption"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Right">

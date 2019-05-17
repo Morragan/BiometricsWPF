@@ -36,7 +36,7 @@ namespace Biometria.Extensions
                     {
                         if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         {
-                            pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride, hBitsPerPixel, wBitsPerPixel);
+                            pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride);
                             continue;
                         }
                         byte sum = (byte)Math.Abs(filter[0] * pixels.GetRGB(x - 1, y - 1, stride).R +
@@ -48,7 +48,7 @@ namespace Biometria.Extensions
                             filter[6] * pixels.GetRGB(x - 1, y + 1, stride).R +
                             filter[7] * pixels.GetRGB(x, y + 1, stride).R +
                             filter[8] * pixels.GetRGB(x + 1, y + 1, stride).R);
-                        pixelsFiltered.SetRGB(x, y, sum, sum, sum, stride, hBitsPerPixel, wBitsPerPixel);
+                        pixelsFiltered.SetRGB(x, y, sum, sum, sum, stride);
                     }
             }
             else
@@ -58,7 +58,7 @@ namespace Biometria.Extensions
                     {
                         if (x == 0 || x == 1 || x == width - 2 || x == width - 1 || y == 0 || y == 1 || y == height - 2 || y == height - 1)
                         {
-                            pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride, hBitsPerPixel, wBitsPerPixel);
+                            pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride);
                             continue;
                         }
                         byte sum = (byte)Math.Abs(filter[0] * pixels.GetRGB(x - 2, y - 2, stride).R +
@@ -86,7 +86,7 @@ namespace Biometria.Extensions
                             filter[22] * pixels.GetRGB(x, y + 2, stride).R +
                             filter[23] * pixels.GetRGB(x + 1, y + 2, stride).R +
                             filter[24] * pixels.GetRGB(x + 2, y + 2, stride).R);
-                        pixelsFiltered.SetRGB(x, y, sum, sum, sum, stride, hBitsPerPixel, wBitsPerPixel);
+                        pixelsFiltered.SetRGB(x, y, sum, sum, sum, stride);
                     }
             }
             return pixelsFiltered;
@@ -100,7 +100,7 @@ namespace Biometria.Extensions
                 {
                     if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                     {
-                        pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride, hBitsPerPixel, wBitsPerPixel);
+                        pixelsFiltered.SetRGB(x, y, 0, 0, 0, stride);
                         continue;
                     }
                     byte sumR = (byte)Math.Abs(filter[0] * pixels.GetRGB(x - 1, y - 1, stride).R +
@@ -130,7 +130,7 @@ namespace Biometria.Extensions
                         filter[6] * pixels.GetRGB(x - 1, y + 1, stride).B +
                         filter[7] * pixels.GetRGB(x, y + 1, stride).B +
                         filter[8] * pixels.GetRGB(x + 1, y + 1, stride).B);
-                    pixelsFiltered.SetRGB(x, y, sumR, sumG, sumB, stride, hBitsPerPixel, wBitsPerPixel);
+                    pixelsFiltered.SetRGB(x, y, sumR, sumG, sumB, stride);
                 }
 
             return pixelsFiltered;

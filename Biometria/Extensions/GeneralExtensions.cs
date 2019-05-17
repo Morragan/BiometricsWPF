@@ -26,11 +26,11 @@ namespace Biometria.Extensions
                 );
         }
 
-        public static void SetRGB(this byte[] pixels, int x, int y, byte R, byte G, byte B, int stride, double hBitsPerPixel, double wBitsPerPixel)
+        public static void SetRGB(this byte[] pixels, int x, int y, byte R, byte G, byte B, int stride)
         {
-            pixels[(int)(y * hBitsPerPixel) * stride + 4 * (int)(x * wBitsPerPixel) + 2] = R;
-            pixels[(int)(y * hBitsPerPixel) * stride + 4 * (int)(x * wBitsPerPixel) + 1] = G;
-            pixels[(int)(y * hBitsPerPixel) * stride + 4 * (int)(x * wBitsPerPixel)] = B;
+            pixels[y * stride + 4 * x + 2] = R;
+            pixels[y * stride + 4 * x + 1] = G;
+            pixels[y * stride + 4 * x] = B;
         }
 
         public static int GetIndex(this WriteableBitmap writeableBitmap, int x, int y) => 
