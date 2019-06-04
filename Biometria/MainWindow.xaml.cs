@@ -399,5 +399,11 @@ namespace Biometria
             });
             BitmapSource = writeableBitmap.ToBitmapSource();
         }
+
+        private void OpenKeystrokeDynamicsWindow(object sender, RoutedEventArgs e)
+        {
+            var window = new KeystrokeDynamicsWindow();
+            window.Show();
+        }
     }
 }

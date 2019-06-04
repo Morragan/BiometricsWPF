@@ -1,0 +1,26 @@
+﻿<Window x:Class="Biometria.KeystrokeDynamicsReadingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Biometria"
+        mc:Ignorable="d"
+        Title="KeystrokeDynamicsReadingWindow" Height="256" Width="310">
+    <StackPanel Margin="5 10">
+        <AdornerDecorator Visibility="{Binding NameTextBoxVisibility}">
+            <TextBox Text="{Binding UserName}">
+                <local:WatermarkService.Watermark>
+                    <TextBlock>Wpisz swoje imię</TextBlock>
+                </local:WatermarkService.Watermark>
+            </TextBox>
+        </AdornerDecorator>
+        <Rectangle Height="25" Fill="Transparent" Visibility="{Binding NameTextBoxVisibility}"/>
+        <Label FontWeight="Bold">Wpisz "how quickly daft jumping zebras vex"</Label>
+        <TextBox Name="Reading1" PreviewKeyDown="RestrictReadingDown1" KeyDown="StartRecording" KeyUp="StopRecording"/>
+        <Rectangle Height="15" Visibility="Hidden"/>
+        <Label FontWeight="Bold">Wpisz "public junk dwarves hug my quartz fox"</Label>
+        <TextBox Name="Reading2" PreviewKeyDown="RestrictReadingDown2" KeyDown="StartRecording" KeyUp="StopRecording"/>
+        <Rectangle Height="25" Visibility="Hidden"/>
+        <Button Height="25" Click="Exit" IsDefault="True">Zatwierdź</Button>
+    </StackPanel>
+</Window>

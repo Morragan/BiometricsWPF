@@ -1,0 +1,87 @@
+﻿<Window x:Class="Biometria.KeystrokeDynamicsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Biometria"
+        xmlns:converters="clr-namespace:Biometria.Converters"
+        mc:Ignorable="d"
+        Title="KeystrokeDynamicsWindow" Height="450" Width="1040"
+        Loaded="LoadReadings"
+        Closing="SaveReadings">
+    <Window.Resources>
+        <converters:SelectedItemToBoolConverter x:Key="SelectedItemToBoolConverter"/>
+        <converters:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
+        <converters:LogicalOrConverter x:Key="LogicalOrConverter"/>
+    </Window.Resources>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right" Width="150" Margin="5 10">
+            <Button Click="OpenKDReadingWindow">Zarejestruj wektor</Button>
+            <Button Click="DeleteReading" Margin="0 2" IsEnabled="{Binding ElementName=Readings_ListView, Path=SelectedItem, Converter={StaticResource SelectedItemToBoolConverter}}">Usuń wektor</Button>
+            <Rectangle Height="25" Visibility="Hidden"/>
+            <Button Click="RecognizeUser">Rozpoznaj użytkownika</Button>
+            <Button Click="VerifyUser">Zweryfikuj użytkownika</Button>
+            <RadioButton Margin="5 3" IsChecked="{Binding DistanceMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:KDDistanceMethod.Euclid}}" Content="Euklides" Name="Euclid_RadioButton"/>
+            <RadioButton Margin="5 3" IsChecked="{Binding DistanceMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:KDDistanceMethod.Manhattan}}" Content="Manhattan" Name="Manhattan_RadioButton"/>
+            <RadioButton Margin="5 3" IsChecked="{Binding DistanceMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:KDDistanceMethod.Chebyshev}}" Content="Czybyszew" Name="Chebyshev_RadioButton"/>
+            <RadioButton Margin="5 3" IsChecked="{Binding DistanceMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:KDDistanceMethod.Mahalanobis}}" Content="Mahalanobis"/>
+            <AdornerDecorator Margin="0 5 0 0">
+                <TextBox Text="{Binding K}">
+                    <TextBox.IsEnabled>
+                        <MultiBinding Converter="{StaticResource LogicalOrConverter}">
+                            <Binding ElementName="Euclid_RadioButton" Path="IsChecked"/>
+                            <Binding ElementName="Manhattan_RadioButton" Path="IsChecked"/>
+                            <Binding ElementName="Chebyshev_RadioButton" Path="IsChecked"/>
+                        </MultiBinding>
+                    </TextBox.IsEnabled>
+                    <local:WatermarkService.Watermark>
+                        <TextBlock Margin="5 0 0 0">Wartość parametru k</TextBlock>
+                    </local:WatermarkService.Watermark>
+                </TextBox>
+            </AdornerDecorator>
+            <Rectangle Height="25" Visibility="Hidden"/>
+            <Button Click="TestMetrics">Przetestuj metryki</Button>
+        </StackPanel>
+        <ListView Name="Readings_ListView" ItemsSource="{Binding Readings}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="A" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[0]}"/>
+                    <GridViewColumn Header="B" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[1]}"/>
+                    <GridViewColumn Header="C" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[2]}"/>
+                    <GridViewColumn Header="D" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[3]}"/>
+                    <GridViewColumn Header="E" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[4]}"/>
+                    <GridViewColumn Header="F" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[5]}"/>
+                    <GridViewColumn Header="G" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[6]}"/>
+                    <GridViewColumn Header="H" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[7]}"/>
+                    <GridViewColumn Header="I" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[8]}"/>
+                    <GridViewColumn Header="J" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[9]}"/>
+                    <GridViewColumn Header="K" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[10]}"/>
+                    <GridViewColumn Header="L" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[11]}"/>
+                    <GridViewColumn Header="M" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[12]}"/>
+                    <GridViewColumn Header="N" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[13]}"/>
+                    <GridViewColumn Header="O" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[14]}"/>
+                    <GridViewColumn Header="P" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[15]}"/>
+                    <GridViewColumn Header="Q" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[16]}"/>
+                    <GridViewColumn Header="R" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[17]}"/>
+                    <GridViewColumn Header="S" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[18]}"/>
+                    <GridViewColumn Header="T" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[19]}"/>
+                    <GridViewColumn Header="U" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[20]}"/>
+                    <GridViewColumn Header="V" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[21]}"/>
+                    <GridViewColumn Header="W" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[22]}"/>
+                    <GridViewColumn Header="X" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[23]}"/>
+                    <GridViewColumn Header="Y" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[24]}"/>
+                    <GridViewColumn Header="Z" Width="32" DisplayMemberBinding="{Binding LetterMeasurements[25]}"/>
+                </GridView>
+            </ListView.View>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="14" Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
+    </DockPanel>
+</Window>

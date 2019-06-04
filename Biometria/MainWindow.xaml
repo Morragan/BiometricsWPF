@@ -30,6 +30,9 @@
                     <MenuItem Header="_K3M" Click="ThinImageK3M" Name="ThinningK3M_MenuOption"/>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="_Narzędzia">
+                <MenuItem Header="_Keystroke Dynamics" Click="OpenKeystrokeDynamicsWindow"/>
+            </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Right">
             <GroupBox Header="Rysowanie">
