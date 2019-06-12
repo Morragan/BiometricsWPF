@@ -49,7 +49,7 @@ namespace Biometria.Extensions
             var covarianceMatrix = new double[vectorSize, vectorSize];
             covarianceMatrix.Initialize();
 
-            for (int i = 0; i < setSize; i++) 
+            for (int i = 0; i < setSize; i++)
             {
                 var sample = Array.ConvertAll(userReadings[i].LetterMeasurements, val => (double)val);
                 var sampleDistanceFromMean = sample.Zip(meanVector, (a, b) => a - b);
@@ -63,6 +63,14 @@ namespace Biometria.Extensions
                 covarianceMatrix = covarianceMatrix.Add(product);
             }
             covarianceMatrix = covarianceMatrix.Divide(setSize);
+            try
+            {
+                covarianceMatrix = covarianceMatrix.Inverse();
+            }
+            catch (Exception)
+            {
+                covarianceMatrix = covarianceMatrix.PseudoInverse();
+            }
 
             var outputMatrix = matrixOfDistancesFromMean.Dot(covarianceMatrix).Dot(matrixOfDistancesFromMeanTransposed);
             return Math.Sqrt(outputMatrix[0, 0]);
@@ -83,7 +91,7 @@ namespace Biometria.Extensions
                     break;
                 case KDDistanceMethod.Mahalanobis:
                     var groupedReadings = userReadings.GroupBy(reading => reading.Name);
-                    var orderedReadingsGroupes = groupedReadings.OrderByDescending(group => _reading.GetMahalanobisDistance(group.ToArray()));
+                    var orderedReadingsGroupes = groupedReadings.OrderBy(group => _reading.GetMahalanobisDistance(group.ToArray()));
                     var user = orderedReadingsGroupes.First().First().Name;
                     //var output = new System.Text.StringBuilder();
                     //foreach (var group in orderedReadingsGroupes)
