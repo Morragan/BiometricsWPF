@@ -25,6 +25,10 @@
                 <MenuItem Header="_Wyrównanie histogramu" Click="EqualizeHistogram" Name="EqualizeHistogram_MenuOption" IsEnabled="False"/>
                 <MenuItem Header="_Binaryzacja" Click="OpenBinarizationWindow" Name="Binarization_MenuOption" IsEnabled="False"/>
                 <MenuItem Header="_Filtrowanie" Click="OpenFiltrationWindow" Name="Filtration_MenuOption" IsEnabled="False"/>
+                <MenuItem Header="_Skala szarości" Click="TurnToGrayscale" Name="Grayscale_MenuOption" IsEnabled="False">
+                    <MenuItem Header="_Normalnie" Click="TurnToGrayscale"/>
+                    <MenuItem Header="_Lepiej" Click="TurnToGrayscaleBetter"/>
+                </MenuItem>
                 <MenuItem Header="_Ścienianie">
                     <MenuItem Header="_KMM" Click="ThinImageKMM" Name="ThinningKMM_MenuOption"/>
                     <MenuItem Header="_K3M" Click="ThinImageK3M" Name="ThinningK3M_MenuOption"/>
@@ -34,85 +38,111 @@
                 <MenuItem Header="_Keystroke Dynamics" Click="OpenKeystrokeDynamicsWindow"/>
             </MenuItem>
         </Menu>
-        <StackPanel DockPanel.Dock="Right">
-            <GroupBox Header="Rysowanie">
-                <Grid Width="184">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="100"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="32"/>
-                    </Grid.ColumnDefinitions>
-                    <xctk:ColorPicker x:Name="ClrPcker_Background" Grid.ColumnSpan="3" Width="100" UsingAlphaChannel="False" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged" SelectedColor="Black"/>
-                    <Rectangle Name="Brush_Rectangle" Grid.ColumnSpan="3" Fill="{Binding RectangleFill}" MouseLeftButtonUp="OpenColorPicker" Width="100"/>
-                    <Label Content="R" Grid.Row="1" VerticalAlignment="Center"/>
-                    <Slider Name="R_Slider" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=R_TextBox,Path=Text}" ValueChanged="SetColorFromRSlider"/>
-                    <TextBox Name="R_TextBox" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=R_Slider,Path=Value}"/>
-                    <Label Content="G" Grid.Row="2" VerticalAlignment="Center"/>
-                    <Slider Name="G_Slider" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=G_TextBox,Path=Text}" ValueChanged="SetColorFromGSlider"/>
-                    <TextBox Name="G_TextBox" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=G_Slider,Path=Value}"/>
-                    <Label Content="B" Grid.Row="3" VerticalAlignment="Center"/>
-                    <Slider Name="B_Slider" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=B_TextBox,Path=Text}" ValueChanged="SetColorFromBSlider"/>
-                    <TextBox Name="B_TextBox" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=B_Slider,Path=Value}"/>
-                    <Label Content="Zoom" Grid.Row="4" VerticalAlignment="Center"/>
-                    <Slider Name="Zoom_Slider" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Minimum="1" Maximum="8" IsEnabled="False"/>
-                    <Label Content="{Binding ElementName=Zoom_Slider, Path=Value}" ContentStringFormat="{}x{0:0.0}" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" />
-                </Grid>
-            </GroupBox>
-            <GroupBox Name="Parameters_GroupBox" Header="Parametry" IsEnabled="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="42"/>
-                        <ColumnDefinition Width="62"/>
-                        <ColumnDefinition Width="30"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Jasność" VerticalAlignment="Center"/>
-                    <TextBox Name="Brightness_TextBox" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" Text="{Binding Brightness, Mode=TwoWay}"/>
-                    <Button Content="Zmień" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 2 0" Click="ChangeBrightness"/>
-                    <Button Content="Reset" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2 5 0 0" Click="ResetImage"/>
-                </Grid>
-            </GroupBox>
-            <GroupBox Name="Stretching_GroupBox" Header="Rozciąganie histogramu" IsEnabled="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <AdornerDecorator>
-                        <TextBox Name="HStretch_a_TextBox" VerticalAlignment="Center" Margin="0 0 2 0" Text="{Binding StretchingValA,Mode=TwoWay}">
-                            <local:WatermarkService.Watermark>
-                                <TextBlock>a</TextBlock>
-                            </local:WatermarkService.Watermark>
-                        </TextBox>
-                    </AdornerDecorator>
-                    <AdornerDecorator Grid.Column="1">
-                        <TextBox Name="HStretch_b_TextBox" VerticalAlignment="Center" Margin="2 0 0 0" Text="{Binding StretchingValB,Mode=TwoWay}">
-                            <local:WatermarkService.Watermark>
-                                <TextBlock>b</TextBlock>
-                            </local:WatermarkService.Watermark>
-                        </TextBox>
-                    </AdornerDecorator>
-                    <Button Content="Rozciągnij" Grid.Row="1" Grid.ColumnSpan="2" Click="StretchHistogram"/>
-                </Grid>
-            </GroupBox>
-            <Label Content="{Binding ElementName=Main_Canvas,Path=ActualWidth}"/>
-            <Label Content="{Binding ElementName=Main_Canvas,Path=ActualHeight}"/>
-        </StackPanel>
+        <ScrollViewer DockPanel.Dock="Right" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Rysowanie">
+                    <Grid Width="194">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <xctk:ColorPicker x:Name="ClrPcker_Background" Grid.ColumnSpan="3" Width="100" UsingAlphaChannel="False" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged" SelectedColor="Black"/>
+                        <Rectangle Name="Brush_Rectangle" Grid.ColumnSpan="3" Fill="{Binding RectangleFill}" MouseLeftButtonUp="OpenColorPicker" Width="100"/>
+                        <Label Content="R" Grid.Row="1" VerticalAlignment="Center"/>
+                        <Slider Name="R_Slider" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=R_TextBox,Path=Text}" ValueChanged="SetColorFromRSlider"/>
+                        <TextBox Name="R_TextBox" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=R_Slider,Path=Value}"/>
+                        <Label Content="G" Grid.Row="2" VerticalAlignment="Center"/>
+                        <Slider Name="G_Slider" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=G_TextBox,Path=Text}" ValueChanged="SetColorFromGSlider"/>
+                        <TextBox Name="G_TextBox" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=G_Slider,Path=Value}"/>
+                        <Label Content="B" Grid.Row="3" VerticalAlignment="Center"/>
+                        <Slider Name="B_Slider" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Minimum="0" Maximum="255" IsSnapToTickEnabled="True" Value="{Binding ElementName=B_TextBox,Path=Text}" ValueChanged="SetColorFromBSlider"/>
+                        <TextBox Name="B_TextBox" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=B_Slider,Path=Value}"/>
+                        <Label Content="Zoom" Grid.Row="4" VerticalAlignment="Center"/>
+                        <Slider Name="Zoom_Slider" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Minimum="1" Maximum="8" IsEnabled="False"/>
+                        <Label Content="{Binding ElementName=Zoom_Slider, Path=Value}" ContentStringFormat="{}x{0:0.0}" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Name="Parameters_GroupBox" Header="Parametry" IsEnabled="False">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="42"/>
+                            <ColumnDefinition Width="62"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Jasność" VerticalAlignment="Center"/>
+                        <TextBox Name="Brightness_TextBox" Grid.Column="2" Grid.ColumnSpan="1" VerticalAlignment="Center" Text="{Binding Brightness, Mode=TwoWay}"/>
+                        <Button Content="Zmień" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 2 0" Click="ChangeBrightness"/>
+                        <Button Content="Reset" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2 5 0 0" Click="ResetImage"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Name="Stretching_GroupBox" Header="Rozciąganie histogramu" IsEnabled="False">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <AdornerDecorator>
+                            <TextBox Name="HStretch_a_TextBox" VerticalAlignment="Center" Margin="0 0 2 0" Text="{Binding StretchingValA,Mode=TwoWay}">
+                                <local:WatermarkService.Watermark>
+                                    <TextBlock>a</TextBlock>
+                                </local:WatermarkService.Watermark>
+                            </TextBox>
+                        </AdornerDecorator>
+                        <AdornerDecorator Grid.Column="1">
+                            <TextBox Name="HStretch_b_TextBox" VerticalAlignment="Center" Text="{Binding StretchingValB,Mode=TwoWay}" HorizontalAlignment="Right" Width="95">
+                                <local:WatermarkService.Watermark>
+                                    <TextBlock>b</TextBlock>
+                                </local:WatermarkService.Watermark>
+                            </TextBox>
+                        </AdornerDecorator>
+                        <Button Content="Rozciągnij" Grid.Row="1" Grid.ColumnSpan="2" Click="StretchHistogram"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Operacje">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label VerticalAlignment="Center" Content="Dodaj"/>
+                        <Label VerticalAlignment="Center" Content="Odejmij" Grid.Row="1"/>
+                        <Label VerticalAlignment="Center" Content="Pomnóż" Grid.Row="2"/>
+                        <Label VerticalAlignment="Center" Content="Podziel" Grid.Row="3"/>
+                        <TextBox Text="{Binding AddFactor, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="1"/>
+                        <TextBox Text="{Binding SubtractFactor, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
+                        <TextBox Text="{Binding MultiplyFactor, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
+                        <TextBox Text="{Binding DivideFactor, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
+                        <Button Grid.Row="4" Grid.ColumnSpan="2" Click="PerformOperations">Wykonaj</Button>
+                    </Grid>
+                </GroupBox>
+                <Label Content="{Binding ElementName=Main_Canvas,Path=ActualWidth}"/>
+                <Label Content="{Binding ElementName=Main_Canvas,Path=ActualHeight}"/>
+            </StackPanel>
+        </ScrollViewer>
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderBrush="Black" BorderThickness="20 20 20 20">
             <Canvas DataContext="{Binding BitmapSource}" Name="Main_Canvas" MouseLeftButtonDown="ChangePixel">
                 <Canvas.Width>

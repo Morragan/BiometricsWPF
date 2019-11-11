@@ -66,7 +66,7 @@ namespace Biometria.Extensions
             pixels[y * stride + 4 * x] = B;
         }
 
-        public static int GetIndex(this WriteableBitmap writeableBitmap, int x, int y) => 
+        public static int GetIndex(this WriteableBitmap writeableBitmap, int x, int y) =>
             (int)(y * writeableBitmap.PixelHeight / writeableBitmap.Height) * writeableBitmap.BackBufferStride + 4 * (int)(x * writeableBitmap.PixelWidth / writeableBitmap.Width);
 
         /// <summary>
@@ -80,6 +80,16 @@ namespace Biometria.Extensions
             return writeableBitmap.Gray();
         }
 
+        public static BitmapSource GrayscaleBetter(this BitmapSource bitmapSource)
+        {
+            var writeableBitmap = new WriteableBitmap(bitmapSource);
+            writeableBitmap.ForEachAsync((x, y, color) =>
+            {
+                byte newColor = (byte)(0.2126 * color.R + 0.7152 * color.G + 0.0722 * color.B).Clamp(0, 255);
+                return Color.FromRgb(newColor, newColor, newColor);
+            });
+            return writeableBitmap.ToBitmapSource();
+        }
         public static WriteableBitmap UpdateWithPixelArray(this WriteableBitmap writeableBitmap, byte[] pixels)
         {
             Int32Rect rect = new Int32Rect(0, 0, writeableBitmap.PixelWidth, writeableBitmap.PixelHeight);
@@ -122,6 +132,12 @@ namespace Biometria.Extensions
                 });
             }
         }
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
+        }
 
         private static int ConvertColor(Color color)
         {
@@ -137,6 +153,61 @@ namespace Biometria.Extensions
             }
 
             return col;
+        }
+
+        public static double GetHue(this Color color)
+        {
+            float min = Math.Min(Math.Min(color.R, color.G), color.B);
+            float max = Math.Max(Math.Max(color.R, color.G), color.B);
+
+            if (min == max) return 0;
+
+            float hue;
+            if (max == color.R)
+                hue = (color.G - color.B) / (max - min);
+            else if (max == color.G)
+                hue = 2f + (color.B - color.R) / (max - min);
+            else
+                hue = 4f + (color.R - color.G) / (max - min);
+
+            hue *= 60;
+            if (hue < 0) hue += 360;
+
+            return Math.Round(hue);
+        }
+
+        public static void ToHSV(this Color color, out double hue, out double saturation, out double value)
+        {
+            int max = Math.Max(color.R, Math.Max(color.G, color.B));
+            int min = Math.Min(color.R, Math.Min(color.G, color.B));
+
+            hue = color.GetHue();
+            saturation = (max == 0) ? 0 : 1d - (1d * min / max);
+            value = max / 255d;
+        }
+        public static Color ColorFromHSV(double hue, double saturation, double value)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+
+            value *= 255;
+            byte v = Convert.ToByte(value);
+            byte p = Convert.ToByte(value * (1 - saturation));
+            byte q = Convert.ToByte(value * (1 - f * saturation));
+            byte t = Convert.ToByte(value * (1 - (1 - f) * saturation));
+
+            if (hi == 0)
+                return Color.FromRgb(v, t, p);
+            else if (hi == 1)
+                return Color.FromRgb(q, v, p);
+            else if (hi == 2)
+                return Color.FromRgb(p, v, t);
+            else if (hi == 3)
+                return Color.FromRgb(p, q, v);
+            else if (hi == 4)
+                return Color.FromRgb(t, p, v);
+            else
+                return Color.FromRgb(v, p, q);
         }
     }
 }

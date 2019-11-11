@@ -83,9 +83,25 @@
             <RadioButton GroupName="FilterMethod" Name="Custom3x3_RB" Content="Własny 3x3" IsChecked="True"/>
             <RadioButton GroupName="FilterMethod" Name="Custom5x5_RB" Content="Własny5x5"/>
             <RadioButton GroupName="FilterMethod" Name="LowPass_RB" Content="Rozmywający"/>
+            <RadioButton GroupName="FilterMethod" Name="HighPass_RB" Content="Wyostrzający"/>
             <RadioButton GroupName="FilterMethod" Name="Prewitt_RB" Content="Prewitta"/>
             <RadioButton GroupName="FilterMethod" Name="Sobel_RB" Content="Sobela"/>
             <RadioButton GroupName="FilterMethod" Name="Laplace_RB" Content="Laplace'a"/>
+            <RadioButton GroupName="FilterMethod" Name="Gaussian_RB" Content="Rozmycie gaussowskie"/>
+            <Grid Visibility="{Binding ElementName=Gaussian_RB, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label>Okno</Label>
+                <TextBox Text="{Binding GaussLength}" Grid.Column="1"/>
+                <Label Grid.Row="1">Sigma</Label>
+                <TextBox Text="{Binding GaussWeight}" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
             <RadioButton GroupName="FilterMethod" Name="Corner_RB" Content="Wykrywający narożniki"/>
             <RadioButton GroupName="FilterMethod" Name="Kuwahara_RB" Content="Kuwahara"/>
             <RadioButton GroupName="FilterMethod" Name="Median3x3_RB" Content="Medianowy 3x3"/>

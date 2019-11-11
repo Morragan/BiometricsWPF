@@ -68,6 +68,8 @@ namespace Biometria
         public int Mask5x524 { get; set; }
         #endregion
         public int[] Mask5x5 => new int[25] { Mask5x50, Mask5x51, Mask5x52, Mask5x53, Mask5x54, Mask5x55, Mask5x56, Mask5x57, Mask5x58, Mask5x59, Mask5x510, Mask5x511, Mask5x512, Mask5x513, Mask5x514, Mask5x515, Mask5x516, Mask5x517, Mask5x518, Mask5x519, Mask5x520, Mask5x521, Mask5x522, Mask5x523, Mask5x524 };
+        public int GaussLength { get; set; } = 3;
+        public double GaussWeight { get; set; } = 1;
 
         public FiltrationWindow(BitmapSource bitmapSource)
         {
@@ -93,9 +95,11 @@ namespace Biometria
             FiltrationMethod method;
             #region Set method
             if (LowPass_RB.IsChecked == true) method = FiltrationMethod.LowPass;
+            else if (HighPass_RB.IsChecked == true) method = FiltrationMethod.HighPass;
             else if (Prewitt_RB.IsChecked == true) method = FiltrationMethod.Prewitt;
             else if (Sobel_RB.IsChecked == true) method = FiltrationMethod.Sobel;
             else if (Laplace_RB.IsChecked == true) method = FiltrationMethod.Laplace;
+            else if (Gaussian_RB.IsChecked == true) method = FiltrationMethod.Gaussian;
             else if (Corner_RB.IsChecked == true) method = FiltrationMethod.Corner;
             else if (Kuwahara_RB.IsChecked == true) method = FiltrationMethod.Kuwahara;
             else if (Median3x3_RB.IsChecked == true) method = FiltrationMethod.Median3x3;
@@ -104,6 +108,7 @@ namespace Biometria
             //TODO: Sprawdzić czy zadziała bez przypisania (samo BitmapSource.Filter())
             if (Custom3x3_RB.IsChecked == true) BitmapSource = BitmapSource.FilterCustom(Mask3x3);
             else if (Custom5x5_RB.IsChecked == true) BitmapSource = BitmapSource.FilterCustom(Mask5x5);
+            else if (Gaussian_RB.IsChecked == true) BitmapSource = BitmapSource.Filter(method, GaussLength, GaussWeight);
             else BitmapSource = BitmapSource.Filter(method);
         }
     }

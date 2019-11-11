@@ -16,7 +16,7 @@ namespace Biometria.Extensions
                 filterG = new byte[filterSize * filterSize],
                 filterB = new byte[filterSize * filterSize];
             for (int _x = -radius; _x <= radius; _x++)
-                for (int _y = -radius; _y <= radius; _y++) 
+                for (int _y = -radius; _y <= radius; _y++)
                 {
                     var (R, G, B) = pixels.GetRGB(_x + x, _y + y, stride);
                     filterR[(_x + radius) * filterSize + _y + radius] = R;
@@ -150,7 +150,7 @@ namespace Biometria.Extensions
             return writeableBitmap.ToBitmapSource();
         }
 
-        public static BitmapSource Filter(this BitmapSource bitmapSource, FiltrationMethod filtrationMethod)
+        public static BitmapSource Filter(this BitmapSource bitmapSource, FiltrationMethod filtrationMethod, int gaussLength = 0, double gaussWeight = 0)
         {
             var writeableBitmap = new WriteableBitmap(bitmapSource);
             var pixels = new byte[writeableBitmap.PixelHeight * writeableBitmap.BackBufferStride];
@@ -166,6 +166,11 @@ namespace Biometria.Extensions
             {
                 case FiltrationMethod.LowPass:
                     var filter = new double[] { 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9 };
+                    pixelsFiltered = pixels.Convolute(filter, writeableBitmap.BackBufferStride, (int)writeableBitmap.Height, (int)writeableBitmap.Width, hBitsPerPixel, wBitsPerPixel);
+                    writeableBitmap.UpdateWithPixelArray(pixelsFiltered);
+                    break;
+                case FiltrationMethod.HighPass:
+                    filter = new double[] { -1, -1, -1, -1, 9, -1, -1, -1, -1 };
                     pixelsFiltered = pixels.Convolute(filter, writeableBitmap.BackBufferStride, (int)writeableBitmap.Height, (int)writeableBitmap.Width, hBitsPerPixel, wBitsPerPixel);
                     writeableBitmap.UpdateWithPixelArray(pixelsFiltered);
                     break;
@@ -190,6 +195,11 @@ namespace Biometria.Extensions
                     pixelsFiltered = pixels.Convolute(filter1, writeableBitmap.BackBufferStride, (int)writeableBitmap.Height, (int)writeableBitmap.Width, hBitsPerPixel, wBitsPerPixel);
                     writeableBitmap.UpdateWithPixelArray(pixelsFiltered);
                     break;
+                case FiltrationMethod.Gaussian:
+                    filter = GaussianBlur(gaussLength, gaussWeight);
+                    pixelsFiltered = pixels.Convolute(filter, writeableBitmap.BackBufferStride, (int)writeableBitmap.Height, (int)writeableBitmap.Width, hBitsPerPixel, wBitsPerPixel);
+                    writeableBitmap.UpdateWithPixelArray(pixelsFiltered);
+                    break;
                 case FiltrationMethod.Corner:
                     filter1 = new int[] { 1, 1, 1, 1, -2, -1, 1, -1, -1 };
                     pixelsFiltered = pixels.Convolute(filter1, writeableBitmap.BackBufferStride, (int)writeableBitmap.Height, (int)writeableBitmap.Width, hBitsPerPixel, wBitsPerPixel);
@@ -211,7 +221,7 @@ namespace Biometria.Extensions
                         double min = variances[0];
                         int minIndex = 0;
                         for (int i = 1; i < variances.Length; i++)
-                            if(variances[i] < min)
+                            if (variances[i] < min)
                             {
                                 min = variances[i];
                                 minIndex = i;
@@ -278,6 +288,32 @@ namespace Biometria.Extensions
                     break;
             }
             return writeableBitmap.ToBitmapSource();
+        }
+
+        public static double[] GaussianBlur(int length, double weight)
+        {
+            double[] kernel = new double[length * length];
+            double kernelSum = 0;
+            int foff = (length - 1) / 2;
+            double constant = 1d / (2 * Math.PI * weight * weight);
+            for (int y = -foff; y <= foff; y++)
+            {
+                for (int x = -foff; x <= foff; x++)
+                {
+                    double distance = ((y * y) + (x * x)) / (2 * weight * weight);
+                    var index = length * (y + foff) + x + foff;
+                    kernel[index] = constant * Math.Exp(-distance);
+                    kernelSum += kernel[index];
+                }
+            }
+            for (int y = 0; y < length; y++)
+            {
+                for (int x = 0; x < length; x++)
+                {
+                    kernel[y * length + x] *= 1d / kernelSum;
+                }
+            }
+            return kernel;
         }
     }
 }

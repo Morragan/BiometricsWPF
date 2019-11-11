@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
-using System.ComponentModel;
 using Biometria.Extensions;
 
 namespace Biometria
@@ -33,9 +25,15 @@ namespace Biometria
             set => Processed_Image.Source = value;
         }
         public Brush RectangleFill { get; set; }
-        public double Brightness { get; set; } = 1;
+        private double brightness = 0;
+        public double Brightness { get => brightness; set => brightness = value.Clamp(-360, 360); }
         public uint StretchingValA { get; set; } = 0;
         public uint StretchingValB { get; set; } = 255;
+
+        public byte AddFactor { get; set; } = 0;
+        public byte SubtractFactor { get; set; } = 0;
+        public double MultiplyFactor { get; set; } = 1;
+        public double DivideFactor { get; set; } = 1;
 
         public MainWindow()
         {
@@ -83,6 +81,8 @@ namespace Biometria
             Parameters_GroupBox.IsEnabled = true;
             Binarization_MenuOption.IsEnabled = true;
             Filtration_MenuOption.IsEnabled = true;
+            Grayscale_MenuOption.IsEnabled = true;
+            Brightness_TextBox.IsEnabled = true;
 
             // przeładowanie bitmapy
             ChangePixel(sender, new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left) { RoutedEvent = Button.ClickEvent });
@@ -294,14 +294,12 @@ namespace Biometria
         private void ChangeBrightness(object sender, RoutedEventArgs e)
         {
             var writeableBitmap = new WriteableBitmap(BitmapSource);
-            var LUT = new byte[256];
-            for (int i = 0; i < 256; i++)
-            {
-                uint val = (uint)Math.Pow(i, Brightness);
-                LUT[i] = (byte)(val > 255 ? 255 : val);
-            }
 
-            writeableBitmap.ForEach((x, y, color) => Color.FromArgb(color.A, LUT[color.R], LUT[color.G], LUT[color.B]));
+            writeableBitmap.ForEachAsync((x, y, color) =>
+            {
+                color.ToHSV(out double hue, out double saturation, out double value);
+                return GeneralExtensions.ColorFromHSV(hue, saturation, (value + brightness / 360).Clamp(0, 1));
+            });
 
             // zapisz do bitmapy
             BitmapSource = writeableBitmap.ToBitmapSource();
@@ -404,6 +402,66 @@ namespace Biometria
         {
             var window = new KeystrokeDynamicsWindow();
             window.Show();
+        }
+
+        private void TurnToGrayscale(object sender, RoutedEventArgs e)
+        {
+            BitmapSource = BitmapSource.Grayscale();
+        }
+
+        private void TurnToGrayscaleBetter(object sender, RoutedEventArgs e)
+        {
+            BitmapSource = BitmapSource.GrayscaleBetter();
+        }
+
+        private void PerformOperations(object sender, RoutedEventArgs e)
+        {
+            var writeableBitmap = new WriteableBitmap(BitmapSource);
+            if (AddFactor != 0)
+            {
+                writeableBitmap.ForEachAsync((x, y, color) =>
+                {
+                    return Color.FromRgb(
+                        (byte)(color.R + AddFactor).Clamp(0, 255),
+                        (byte)(color.G + AddFactor).Clamp(0, 255),
+                        (byte)(color.B + AddFactor).Clamp(0, 255)
+                        );
+                });
+            }
+            if (SubtractFactor != 0)
+            {
+                writeableBitmap.ForEachAsync((x, y, color) =>
+                {
+                    return Color.FromRgb(
+                        (byte)(color.R - SubtractFactor).Clamp(0, 255),
+                        (byte)(color.G - SubtractFactor).Clamp(0, 255),
+                        (byte)(color.B - SubtractFactor).Clamp(0, 255)
+                        );
+                });
+            }
+            if (MultiplyFactor != 1)
+            {
+                writeableBitmap.ForEachAsync((x, y, color) =>
+                {
+                    return Color.FromRgb(
+                        (byte)(color.R * MultiplyFactor).Clamp(0, 255),
+                        (byte)(color.G * MultiplyFactor).Clamp(0, 255),
+                        (byte)(color.B * MultiplyFactor).Clamp(0, 255)
+                        );
+                });
+            }
+            if (DivideFactor != 1 || DivideFactor != 0)
+            {
+                writeableBitmap.ForEachAsync((x, y, color) =>
+                {
+                    return Color.FromRgb(
+                        (byte)(color.R / DivideFactor).Clamp(0, 255),
+                        (byte)(color.G / DivideFactor).Clamp(0, 255),
+                        (byte)(color.B / DivideFactor).Clamp(0, 255)
+                        );
+                });
+            }
+            BitmapSource = writeableBitmap.ToBitmapSource();
         }
     }
 }

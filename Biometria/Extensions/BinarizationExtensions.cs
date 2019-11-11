@@ -40,7 +40,95 @@ namespace Biometria.Extensions
                 double withinClassVariance = preThresholdProbability * preThresholdVariance + postThresholdProbability * postThresholdVariance;
                 withinClassVariances.Add(potentialThreshold, withinClassVariance);
             }
-            return withinClassVariances.Aggregate((l, r) => l.Value < r.Value ? l : r).Key; 
+            return withinClassVariances.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+        }
+
+        public static byte BlackPercentageThreshold(this BitmapSource bitmapSource, int percentage)
+        {
+            int[] histogram = bitmapSource.BrightnessHistogram();
+            int allPixelsCount = histogram.Sum(), pixelsCount = 0;
+            double nPercentage = Convert.ToDouble(percentage) / 100.0;
+            var blackPixelsCount = allPixelsCount * nPercentage;
+            for (byte threshold = 0; threshold <= 255; threshold++)
+            {
+                pixelsCount += histogram[threshold];
+                if (pixelsCount >= blackPixelsCount) return threshold;
+            }
+            return 255;
+        }
+
+        public static byte EntropyThreshold(this BitmapSource bitmapSource)
+        {
+            int[] Histogram = bitmapSource.BrightnessHistogram();
+            int X, Y, Amount = 0;
+            double[] HistGramD = new double[256];
+            double SumIntegral, EntropyBack, EntropyFore, MaxEntropy;
+            int MinValue, MaxValue;
+            int Threshold = 0;
+
+            for (MinValue = 0; MinValue < 256 && Histogram[MinValue] == 0; MinValue++) ;
+            for (MaxValue = 255; MaxValue > MinValue && Histogram[MinValue] == 0; MaxValue--) ;
+            if (MaxValue == MinValue) return Convert.ToByte(MaxValue);
+            if (MinValue + 1 == MaxValue) return Convert.ToByte(MinValue);
+
+            for (Y = MinValue; Y <= MaxValue; Y++) Amount += Histogram[Y];
+
+            for (Y = MinValue; Y <= MaxValue; Y++) HistGramD[Y] = (double)Histogram[Y] / Amount + 1e-17;
+
+            MaxEntropy = double.MinValue;
+            for (Y = MinValue + 1; Y < MaxValue; Y++)
+            {
+                SumIntegral = 0;
+                for (X = MinValue; X <= Y; X++) SumIntegral += HistGramD[X];
+                EntropyBack = 0;
+                for (X = MinValue; X <= Y; X++) EntropyBack += (-HistGramD[X] / SumIntegral * Math.Log(HistGramD[X] / SumIntegral));
+                EntropyFore = 0;
+                for (X = Y + 1; X <= MaxValue; X++) EntropyFore += (-HistGramD[X] / (1 - SumIntegral) * Math.Log(HistGramD[X] / (1 - SumIntegral)));
+                if (MaxEntropy < EntropyBack + EntropyFore)
+                {
+                    Threshold = Y;
+                    MaxEntropy = EntropyBack + EntropyFore;
+                }
+            }
+            return Convert.ToByte(Threshold);
+        }
+
+        public static byte MeanIterativeThreshold(this BitmapSource bitmapSource)
+        {
+            int[] Histogram = bitmapSource.BrightnessHistogram();
+            int X;
+            int MeanValueOne, MeanValueTwo, SumOne, SumTwo, SumIntegralOne, SumIntegralTwo;
+            int MinValue, MaxValue;
+            int Threshold, NewThreshold;
+
+            for (MinValue = 0; MinValue < 256 && Histogram[MinValue] == 0; MinValue++) ;
+            for (MaxValue = 255; MaxValue > MinValue && Histogram[MinValue] == 0; MaxValue--) ;
+
+            if (MaxValue == MinValue) return Convert.ToByte(MaxValue);
+            if (MinValue + 1 == MaxValue) return Convert.ToByte(MinValue);
+
+            Threshold = MinValue;
+            NewThreshold = (MaxValue + MinValue) >> 1;
+            for (int i = 0; Threshold != NewThreshold; i++)
+            {
+                SumOne = 0; SumIntegralOne = 0;
+                SumTwo = 0; SumIntegralTwo = 0;
+                Threshold = NewThreshold;
+                for (X = MinValue; X <= Threshold; X++)
+                {
+                    SumIntegralOne += Histogram[X] * X;
+                    SumOne += Histogram[X];
+                }
+                MeanValueOne = SumIntegralOne / SumOne;
+                for (X = Threshold + 1; X <= MaxValue; X++)
+                {
+                    SumIntegralTwo += Histogram[X] * X;
+                    SumTwo += Histogram[X];
+                }
+                MeanValueTwo = SumIntegralTwo / SumTwo;
+                NewThreshold = (MeanValueOne + MeanValueTwo) >> 1;
+            }
+            return Convert.ToByte(Threshold);
         }
 
         public static BitmapSource Binarize(this BitmapSource bitmapSource, int threshold)

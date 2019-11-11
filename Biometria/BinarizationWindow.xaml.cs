@@ -1,18 +1,8 @@
 ﻿using Biometria.Extensions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Biometria
 {
@@ -29,6 +19,7 @@ namespace Biometria
             set => Processed_Image.Source = value;
         }
         private byte otsuThreshold = 0;
+
         public byte OtsuThreshold
         {
             get { return otsuThreshold; }
@@ -36,6 +27,38 @@ namespace Biometria
             {
                 otsuThreshold = value;
                 NotifyPropertyChanged("OtsuThreshold");
+            }
+        }
+        public byte PercentBlack { get; set; } = 50;
+        private byte percentBlackThreshold = 128;
+
+        public byte PercentBlackThreshold
+        {
+            get => percentBlackThreshold;
+            set
+            {
+                percentBlackThreshold = value;
+                NotifyPropertyChanged("PercentBlackThreshold");
+            }
+        }
+        private byte entropyThreshold = 0;
+        public byte EntropyThreshold
+        {
+            get => entropyThreshold;
+            set
+            {
+                entropyThreshold = value;
+                NotifyPropertyChanged("EntropyThreshold");
+            }
+        }
+        private byte meanIterativeThreshold = 0;
+        public byte MeanIterativeThreshold
+        {
+            get => meanIterativeThreshold;
+            set
+            {
+                meanIterativeThreshold = value;
+                NotifyPropertyChanged("MeanIterativeThreshold");
             }
         }
         public double NiblackK { get; set; }
@@ -72,6 +95,21 @@ namespace Biometria
             OtsuThreshold_Slider.Value = BitmapSource.OtsuThreshold();
         }
 
+        private void EstimateBlackPercentageThreshold(object sender, RoutedEventArgs e)
+        {
+            PercentBlackThreshold = BitmapSource.BlackPercentageThreshold(PercentBlack);
+        }
+
+        private void EstimateEntropyThreshold(object sender, RoutedEventArgs e)
+        {
+            EntropyThreshold = BitmapSource.EntropyThreshold();
+        }
+
+        private void EstimateMeanIterativeThreshold(object sender, RoutedEventArgs e)
+        {
+            MeanIterativeThreshold = BitmapSource.MeanIterativeThreshold();
+        }
+
         /// <summary>
         /// Binaryzuje załadowaną bitmapę metodą Otsu lub Niblacka, w zależności od wybranego RadioButtona. Wywoływana po kliknięciu przycisku "Wykonaj"
         /// </summary>
@@ -81,6 +119,12 @@ namespace Biometria
         {
             if (Otsu_RadioButton.IsChecked == true)
                 BitmapSource = BitmapSource.Binarize(OtsuThreshold);
+            else if (PercentBlack_RadioButton.IsChecked == true)
+                BitmapSource = BitmapSource.Binarize(PercentBlackThreshold);
+            else if (Entropy_RadioButton.IsChecked == true)
+                BitmapSource = BitmapSource.Binarize(EntropyThreshold);
+            else if (MeanIterative_RadioButton.IsChecked == true)
+                BitmapSource = BitmapSource.Binarize(MeanIterativeThreshold);
             else
                 BitmapSource = BitmapSource.BinarizeNiblack(NiblackK, (int)NiblackWidth, (int)NiblackHeight);
         }
